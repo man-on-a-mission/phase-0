@@ -55,6 +55,17 @@ list () {
   return 0
 }
 
+delete () {
+  if ! has_tasks; then
+    return 1
+  fi
+
+  sed -i "" "$1d" $TASK_FILE_PATH 
+  
+  return 0
+  
+}
+
 if declare -f "$1" > /dev/null; then
 
   function_name=$1
