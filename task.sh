@@ -7,6 +7,15 @@
 # First we will start with the adding tasks functionality.
 
 TASK_FILE_PATH="./tasks.txt"
+
+if test -f $TASK_FILE_PATH; then
+  :
+else
+  touch tasks.txt
+  echo "Tasks file created successfully ✅"
+fi
+
+
 TOTAL_LINES=$( cat $TASK_FILE_PATH | wc -l )
 
 has_tasks () {
