@@ -21,7 +21,7 @@ TOTAL_LINES=$( cat $TASK_FILE_PATH | wc -l )
 has_tasks () {
   if [ $TOTAL_LINES -lt 1  ]
   then
-    echo -n "You must create a task first. Try sh task.sh add <task_description>"
+    echo "You must create a task first. Try sh task.sh add <task_description>"
     return 1
   else
     return 0
@@ -32,10 +32,8 @@ has_tasks () {
 
 add () {
 
-  local task_number=$(( TOTAL_LINES + 1 ))
- 
-  echo "$task_number. $1" >> $TASK_FILE_PATH
-  echo -n "Your task has been inserted successfully ✅"
+  echo $1 >> $TASK_FILE_PATH
+  echo "Your task has been inserted successfully ✅"
   
   return 0
 }
@@ -46,9 +44,12 @@ complete () {
     return 1
   fi
 
-  local task=$( sed -n "$1p" $TASK_FILE_PATH )
-  sed -i "" "$1s/.*/$task ✅/" $TASK_FILE_PATH
-  echo -n "Your task has been updated successfully ✅"
+  if sed -n "$1p" $TASK_FILE_PATH | grep "✅" > /dev/null; then
+    echo "This task has been marked as completed already."
+  else
+    sed -i "" "$1s,.*,$task ✅," $TASK_FILE_PATH
+    echo "Your task has been updated successfully ✅"
+  fi
   
   return 0
   
@@ -60,7 +61,7 @@ list () {
     return 1
   fi
   
-  cat $TASK_FILE_PATH
+  cat -b $TASK_FILE_PATH
   return 0
 }
 
@@ -82,7 +83,7 @@ if declare -f "$1" > /dev/null; then
   "$function_name" "$@"
 
 else
- echo "'$1' is not a known function name" >&2
+ echo "'$1' is not a known function name" 2>&1
  exit 1
 
 fi
